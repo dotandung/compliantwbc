@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<!--
+  CompliantWBC -- camera-ready page.
+  Copied from ~/Documents/Research/Web/compliantwbc.github.io and extended with
+  author blocks following ~/Documents/Research/Web/Cam_ready/CrossBFM.
+  Author list follows assets/authors/author.txt.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CompliantWBC: Whole-Body Compliance for Heavy Humanoids</title>
+  <meta name="description" content="A heavy humanoid that yields to external forces anywhere on its body — arms, torso, pelvis, legs — and stays on its feet. Results and demos." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Google Sans for headings, Noto Sans for body, JetBrains Mono for the wordmark -->
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="CompliantWBC: Whole-Body Compliance for Heavy Humanoids via Force Latent Estimation and Residual Impedance Targets" />
+  <meta property="og:description" content="A heavy humanoid that yields to external forces anywhere on its body — arms, torso, pelvis, legs — and stays on its feet." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="figures/teaser.png" />
+</head>
+<body>
+<main class="page">
+
+  <!-- ===================== Brand / logo ===================== -->
+  <header class="brand">
+    <a class="brand-logo" href="#hero" aria-label="CompliantWBC home">
+      <span class="brand-compliant">Compliant</span><span class="brand-wbc">WBC</span>
+    </a>
+  </header>
+
+  <!-- ===================== Sticky table of contents ===================== -->
+  <nav class="page-toc" aria-label="Page sections">
+    <div class="page-toc-inner">
+      <p class="page-toc-label">On This Page</p>
+      <div class="page-toc-links">
+        <a href="#hero" data-toc-link="hero" aria-current="true">Overview</a>
+        <a href="#abstract" data-toc-link="abstract" aria-current="false">Abstract</a>
+        <a href="#video" data-toc-link="video" aria-current="false">Video</a>
+        <a href="#method" data-toc-link="method" aria-current="false">How It Works</a>
+        <a href="#results" data-toc-link="results" aria-current="false">Results</a>
+        <a href="#demos" data-toc-link="demos" aria-current="false">Demos</a>
+        <a href="#authors" data-toc-link="authors" aria-current="false">Authors</a>
+        <a href="#bibtex" data-toc-link="bibtex" aria-current="false">BibTeX</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content">
+    <div class="content-inner">
+
+      <!-- ===================== Hero ===================== -->
+      <section id="hero" class="hero">
+        <div class="hero-copy">
+          <h1>Whole-Body Compliance for Heavy Humanoids via Force Latent Estimation and Residual Impedance Targets</h1>
+
+          <div class="hero-authors">
+            <span class="hero-author-line">
+              <a href="https://dotandung.github.io" target="_blank" rel="noopener">Tan-Dzung Do<sup>*</sup></a>,
+              <a href="https://kookie14.github.io/kookie14/" target="_blank" rel="noopener">Cuc T. Trinh<sup>*</sup></a>,
+              <a href="https://tuandattt.github.io/" target="_blank" rel="noopener">Tuan Dat Phuong</a>,
+            </span>
+            <span class="hero-author-line">
+              <a href="https://github.com/LeAnhChien-1903" target="_blank" rel="noopener">Chien Le</a>,
+              <a href="https://capfab.github.io/" target="_blank" rel="noopener">Thanh Ly</a>,
+              <a href="https://vienngo.github.io/" target="_blank" rel="noopener">Vien Anh Ngo<sup>&dagger;</sup></a>,
+              <a href="https://anindex.github.io/" target="_blank" rel="noopener">An Thai Le<sup>&dagger;</sup></a>
+            </span>
+          </div>
+          <div class="hero-author-notes">
+            <span><sup>*</sup>Equal contribution</span>
+            <span><sup>&dagger;</sup>Equal advising</span>
+          </div>
+
+          <div class="hero-actions">
+            <div class="cta-row">
+              <!-- TODO: point these at the real arXiv / GitHub URLs once available -->
+              <a class="cta primary" href="paper/compliant_wbc.pdf" target="_blank" rel="noreferrer">Paper (PDF)</a>
+              <a class="cta cta-secondary" href="#" target="_blank" rel="noreferrer">arXiv</a>
+              <a class="cta cta-secondary" href="#" target="_blank" rel="noreferrer">Code</a>
+              <a class="cta cta-secondary" href="#bibtex">BibTeX</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-copy">
+          <div class="hero-media">
+            <div class="video-frame">
+              <img src="figures/teaser.png" alt="CompliantWBC teaser: a whole-body compliant policy demonstrated on a heavy humanoid across a range of real-world force-aware tasks" />
+            </div>
+          </div>
+          <p class="figure-caption">Push a 70&nbsp;kg humanoid anywhere &mdash; hand, torso, pelvis, legs &mdash; and it yields to the force with its whole body instead of fighting back, while staying on its feet and carrying on with the task.</p>
+        </div>
+      </section>
+
+      <!-- ===================== Abstract ===================== -->
+      <section id="abstract" class="section">
+        <header class="section-head">
+          <h2>Abstract</h2>
+        </header>
+        <p class="abstract-text">
+          Whole-body compliant control is essential for deploying heavy humanoids under high
+          payload in human-centric environments. Most prior force-aware learning-based pipelines
+          focus on end-effector resistance, per-link upper-body springs, or end-effector stiffness
+          modulation, leaving <em>arbitrary-site perturbations on heavy platforms with lower-body
+          engagement</em> largely unaddressed. We close this gap with <strong>CompliantWBC</strong>
+          comprising: (1)&nbsp;A <em>base policy</em> trained with RL to maximize
+          compliance-fidelity reward, guided by a multi-site whole-body impedance <em>reference
+          controller</em>, extending classical Cartesian impedance to any controlled link;
+          (2)&nbsp;A bounded <em>residual policy</em> that edits the per-link impedance equilibrium
+          over a frozen base, correcting the coarse but structured wrench estimate supplied by a
+          <em>force encoder</em> co-trained behind a gradient barrier; (3)&nbsp;A <em>Phong-weighted
+          force-origin sampler</em> with an axis-decoupled pelvis anchor induces
+          lower-body-inclusive compliance curriculum training via two interpretable parameters.
+          We evaluate CompliantWBC in simulation against both compliant and stiff baselines,
+          achieving best compliant fidelity of 2.58&nbsp;cm deviation from analytical solutions,
+          and demonstrate it on a real heavy humanoid across static/dynamic force reaction, board
+          wiping, squat under payload, and cooperative payload transport.
+        </p>
+      </section>
+
+      <!-- ===================== Overview video ===================== -->
+      <section id="video" class="section">
+        <header class="section-head">
+          <h2>Video</h2>
+        </header>
+        <div class="video-frame">
+          <video src="figures/video_real/compliantWBC.mp4#t=0.1" controls playsinline preload="metadata"></video>
+        </div>
+      </section>
+
+      <!-- ===================== How it works ===================== -->
+      <section id="method" class="section method">
+        <header class="section-head">
+          <h2>How It Works</h2>
+        </header>
+
+        <p class="lede">
+          The robot has no force sensors. It has to guess a push through its own joints, decide
+          how far to yield while staying balanced. We train that behaviour in
+          two stages in simulation then deploy it directly on hardware. <strong>Stage&nbsp;1</strong> teaches the robot to yield: pushes are randomized all
+            over the body, a small network guesses the push from proprioception, and the policy is
+            rewarded for landing in the exact place where an ideal compliant controller would be.
+            <strong>Stage&nbsp;2</strong> freezes all of that and trains a small, bounded residual
+            that fixes what the force estimation gets wrong.
+        </p>
+
+        <figure>
+          <img src="figures/pipeline.png" alt="The two-stage CompliantWBC training pipeline: a base policy trained with a force encoder, then a bounded residual on the frozen base" />
+        </figure>
+
+        <div class="contrib-grid">
+          <article class="contrib">
+            <h4>An analytical controller for compliance</h4>
+            <p>Classical control tells us exactly where each body part <em>should</em> end up when a force hits it &mdash; as if a spring were attached to it &mdash; while balance is kept. We use that only to assign reward the policy during training. It never runs on the robot, so none of its cost or fragility affect the policy inference.</p>
+          </article>
+          <article class="contrib">
+            <h4>A guess at the push, plus a small correction</h4>
+            <p>With no force sensors, the robot infers the push from its own joint history. That guess points the right direction but has some bias to the <em>amplitude</em>. So a second, small network nudges where each spring is pulled to &mdash; by at most 5&nbsp;cm. Because it moves a target rather than the motors, how hard the robot can push back stays bounded within the base policy's behavior.</p>
+          </article>
+          <article class="contrib">
+            <h4>Pushes everywhere, not just the hands</h4>
+            <p>In training, forces come from all over the body &mdash; pelvis and legs included &mdash; biased downward, like weight being carried. That is what makes the robot squat, lean, and shift its weight, instead of only moving its arms the way upper-body-only methods do.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================== Results ===================== -->
+      <section id="results" class="section">
+        <header class="section-head">
+          <h2>Results</h2>
+        </header>
+
+        <article class="results-panel">
+          <div class="results-head">
+            <h3>Compliant vs Stiff Behavior</h3>
+            <p>
+              We compare against a stiff whole-body tracker
+              (<strong>TWIST2</strong>) and an upper-body-only compliant method
+              (<strong>Gentle&nbsp;Humanoid</strong>), and against ablated versions of our method.
+            </p>
+            <p>
+            The stiff tracker follows commands best when nothing is touching it, but it fights
+            every push and falls in 4 of 10 trials. Upper-body-only compliance survives, yet its
+            legs barely participate. Ours comes closest to how an ideal compliant controller would
+            react, leaves the most headroom in the motors, puts twice as much of the reaction
+            through the legs, and stays up in 98% of trials &mdash; for a small cost in free-space
+            tracking. Take away the pelvis pushes and the legs stop helping; take away the
+            correction and the give-way gets noticeably worse.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Controller</th>
+                  <th><span class="sym">E<sub>cmd</sub><sup>free</sup> &darr;</span></th>
+                  <th><span class="sym">E<sub>imp</sub> &darr;</span></th>
+                  <th><span class="sym">&rho;<sub>&tau;</sub> &darr;</span></th>
+                  <th><span class="sym">R<sub>LB</sub> &uarr;</span></th>
+                  <th><span class="sym">S &uarr;</span></th>
+                </tr>
+                <tr class="subhead">
+                  <th></th>
+                  <th><span class="desc">tracking error,<br>nothing touching it</span> <span class="unit">cm</span></th>
+                  <th><span class="desc">distance from<br>the ideal give</span> <span class="unit">cm</span></th>
+                  <th><span class="desc">joints near their<br>torque limit</span> <span class="unit">%</span></th>
+                  <th><span class="desc">share of the reaction<br>taken by the legs</span> <span class="unit">%</span></th>
+                  <th><span class="desc">trials without<br>a fall</span> <span class="unit">%</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>TWIST2 (stiff)</td>
+                  <td><b>2.18</b><small>&plusmn;0.31</small></td><td>6.79<small>&plusmn;0.72</small></td>
+                  <td>2.74<small>&plusmn;0.38</small></td><td>16<small>&plusmn;4</small></td><td>59</td>
+                </tr>
+                <tr>
+                  <td>Gentle Humanoid (upper body)</td>
+                  <td>5.22<small>&plusmn;0.47</small></td><td>3.92<small>&plusmn;0.35</small></td>
+                  <td>2.12<small>&plusmn;0.29</small></td><td>14<small>&plusmn;3</small></td><td>91</td>
+                </tr>
+                <tr>
+                  <td>Ours, without pelvis force sampling</td>
+                  <td>4.12<small>&plusmn;0.38</small></td><td>4.22<small>&plusmn;0.21</small></td>
+                  <td>1.87<small>&plusmn;0.24</small></td><td>16<small>&plusmn;3</small></td><td>93</td>
+                </tr>
+                <tr>
+                  <td>Ours, without the correction</td>
+                  <td>4.29<small>&plusmn;0.35</small></td><td>3.81<small>&plusmn;0.29</small></td>
+                  <td>1.56<small>&plusmn;0.21</small></td><td>20<small>&plusmn;3</small></td><td>94</td>
+                </tr>
+                <tr class="ours">
+                  <td>CompliantWBC (full)</td>
+                  <td>4.65<small>&plusmn;0.41</small></td><td><b>2.58</b><small>&plusmn;0.24</small></td>
+                  <td><b>0.93</b><small>&plusmn;0.15</small></td><td><b>31</b><small>&plusmn;4</small></td><td><b>98</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            We plot the leg reactions during a push on the pelvis. The compliant policy (yellow) stays well clear of the torque limit; the stiff tracker (blue) drives its legs into saturation &mdash; the resist-and-fall behaviour behind that 59% number.
+          </p>
+          <figure class="torqueplot-figure">
+            <div id="torqueplot" class="torqueplot">
+              <noscript>
+                <img src="figures/torque.jpeg" alt="Joint-torque trajectories of compliant vs. non-compliant controllers under a pelvis perturbation" />
+              </noscript>
+            </div>
+          </figure>
+        </article>
+
+        <!-- Where the effort lands, joint by joint -->
+        <article class="results-panel prose-lg">
+          <div class="results-head">
+            <h3>Where the Effort Lands</h3>
+            <p>
+              We analyzed the same pelvis push across all twelve lower-body joints. Each row is one joint reaction in each 0.1s time window and the shade is how much of that joint's torque
+              limit is in use. The stiff tracker keeps every joint loaded and pins its left ankle
+              roll against the limit for a fifth of the run (red). Ours works at about half the
+              effort overall &mdash; 11% of the limit against 21% &mdash; leaves most joints nearly
+              idle, and puts what load is left into the knees, which have larger torque limits compared to ankles.
+            </p>
+          </div>
+          <figure class="heatmap-figure">
+            <div id="torqueheatmap" class="heatmap">
+              <noscript>
+                <img src="figures/torque_heatmap.png" alt="Per-joint lower-body effort over time, stiff versus compliant controller" />
+              </noscript>
+            </div>
+          </figure>
+        </article>
+
+        <!-- How good is the guess? -->
+        <article class="results-panel">
+          <div class="results-head">
+            <h3>Force Prediction: Right Direction, Bias Amplitude</h3>
+          </div>
+          <p>
+              With no force sensors, the robot has to infer the push from its own joints. We
+              checked that guess against the truth over 242k samples, sorted by how hard the push
+              actually was.
+          </p>
+          <figure class="ampdir-figure">
+            <svg class="ampdir-svg" viewBox="0 0 880 548" role="img" preserveAspectRatio="xMidYMid meet" aria-label="Box plots of the robot&#39;s force guess against the true push, binned by push size. The direction error shrinks from 33 to 19 degrees as the push grows, while the estimated size falls from 2.35 times too large to 0.80 times too small, passing through correct in the 10 to 25 newton bin.">
+            <defs><style>.ad-h{font-family:var(--sans);fill:var(--text);font-size:18px;font-weight:600}.ad-s{font-family:var(--sans);fill:var(--overlay1);font-size:11.5px}.ad-v{font-family:var(--sans);fill:var(--text);font-size:12.5px;font-weight:600}.ad-ax{font-family:var(--sans);fill:var(--subtext0);font-size:11.5px}.ad-bin{font-family:var(--sans);fill:var(--text);font-size:11.5px}.ad-n{font-family:var(--sans);fill:var(--overlay1);font-size:10.5px}.ad-g{stroke:var(--line);stroke-width:1}.ad-ref{stroke:var(--overlay0);stroke-width:1.4;stroke-dasharray:5 4}.ad-refl{font-family:var(--sans);fill:var(--overlay1);font-size:11px}</style></defs>
+            <text class="ad-h" x="104" y="30">How hard does it think the push is?</text>
+            <text class="ad-s" x="104" y="47">its guess ÷ the truth — 1× means exactly right</text>
+            <line class="ad-g" x1="104" y1="243.0" x2="856" y2="243.0"/>
+            <text class="ad-ax" x="92" y="247.0" text-anchor="end">0.5×</text>
+            <line class="ad-g" x1="104" y1="207.2" x2="856" y2="207.2"/>
+            <text class="ad-ax" x="92" y="211.2" text-anchor="end">1×</text>
+            <line class="ad-g" x1="104" y1="171.4" x2="856" y2="171.4"/>
+            <text class="ad-ax" x="92" y="175.4" text-anchor="end">2×</text>
+            <line class="ad-g" x1="104" y1="135.6" x2="856" y2="135.6"/>
+            <text class="ad-ax" x="92" y="139.6" text-anchor="end">4×</text>
+            <line class="ad-g" x1="104" y1="88.3" x2="856" y2="88.3"/>
+            <text class="ad-ax" x="92" y="92.3" text-anchor="end">10×</text>
+            <line class="ad-ref" x1="104" y1="207.2" x2="856" y2="207.2"/>
+            <text class="ad-refl" x="110" y="222.2">exactly right</text>
+            <line x1="166.7" y1="214.8" x2="166.7" y2="90.9" stroke="#a8d3f2" stroke-width="3"/>
+            <rect x="139.7" y="126.3" width="54" height="66.5" fill="#a8d3f2"/>
+            <line x1="139.7" y1="163.2" x2="193.7" y2="163.2" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="166.7" y="81.9" text-anchor="middle">2.35×</text>
+            <line x1="292.0" y1="240.3" x2="292.0" y2="148.9" stroke="#7cbcea" stroke-width="3"/>
+            <rect x="265.0" y="170.4" width="54" height="51.9" fill="#7cbcea"/>
+            <line x1="265.0" y1="196.3" x2="319.0" y2="196.3" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="292.0" y="139.9" text-anchor="middle">1.24×</text>
+            <line x1="417.3" y1="242.1" x2="417.3" y2="176.7" stroke="#4a9fe0" stroke-width="3"/>
+            <rect x="390.3" y="192.2" width="54" height="35.4" fill="#4a9fe0"/>
+            <line x1="390.3" y1="208.8" x2="444.3" y2="208.8" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="417.3" y="167.7" text-anchor="middle">0.97×</text>
+            <line x1="542.7" y1="242.5" x2="542.7" y2="201.9" stroke="#3585c4" stroke-width="3"/>
+            <rect x="515.7" y="208.5" width="54" height="21.3" fill="#3585c4"/>
+            <line x1="515.7" y1="216.1" x2="569.7" y2="216.1" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="542.7" y="192.9" text-anchor="middle">0.84×</text>
+            <line x1="668.0" y1="246.4" x2="668.0" y2="195.8" stroke="#2569a2" stroke-width="3"/>
+            <rect x="641.0" y="206.9" width="54" height="27.6" fill="#2569a2"/>
+            <line x1="641.0" y1="218.2" x2="695.0" y2="218.2" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="668.0" y="186.8" text-anchor="middle">0.81×</text>
+            <line x1="793.3" y1="244.5" x2="793.3" y2="208.7" stroke="#17507f" stroke-width="3"/>
+            <rect x="766.3" y="211.6" width="54" height="21.2" fill="#17507f"/>
+            <line x1="766.3" y1="218.9" x2="820.3" y2="218.9" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="793.3" y="199.7" text-anchor="middle">0.80×</text>
+            <text class="ad-h" x="104" y="304">Which way does it think the push is?</text>
+            <text class="ad-s" x="104" y="321">how far off the guessed direction is — smaller is better</text>
+            <line class="ad-g" x1="104" y1="486.0" x2="856" y2="486.0"/>
+            <text class="ad-ax" x="92" y="490.0" text-anchor="end">0°</text>
+            <line class="ad-g" x1="104" y1="447.9" x2="856" y2="447.9"/>
+            <text class="ad-ax" x="92" y="451.9" text-anchor="end">25°</text>
+            <line class="ad-g" x1="104" y1="409.7" x2="856" y2="409.7"/>
+            <text class="ad-ax" x="92" y="413.7" text-anchor="end">50°</text>
+            <line class="ad-g" x1="104" y1="371.6" x2="856" y2="371.6"/>
+            <text class="ad-ax" x="92" y="375.6" text-anchor="end">75°</text>
+            <line x1="166.7" y1="468.0" x2="166.7" y2="361.9" stroke="#a8d3f2" stroke-width="3"/>
+            <rect x="139.7" y="404.1" width="54" height="51.6" fill="#a8d3f2"/>
+            <line x1="139.7" y1="435.0" x2="193.7" y2="435.0" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="166.7" y="352.9" text-anchor="middle">33°</text>
+            <line x1="292.0" y1="471.6" x2="292.0" y2="380.5" stroke="#7cbcea" stroke-width="3"/>
+            <rect x="265.0" y="418.7" width="54" height="43.1" fill="#7cbcea"/>
+            <line x1="265.0" y1="445.2" x2="319.0" y2="445.2" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="292.0" y="371.5" text-anchor="middle">27°</text>
+            <line x1="417.3" y1="473.9" x2="417.3" y2="405.8" stroke="#4a9fe0" stroke-width="3"/>
+            <rect x="390.3" y="432.4" width="54" height="33.6" fill="#4a9fe0"/>
+            <line x1="390.3" y1="452.8" x2="444.3" y2="452.8" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="417.3" y="396.8" text-anchor="middle">22°</text>
+            <line x1="542.7" y1="474.7" x2="542.7" y2="418.4" stroke="#3585c4" stroke-width="3"/>
+            <rect x="515.7" y="438.9" width="54" height="28.3" fill="#3585c4"/>
+            <line x1="515.7" y1="455.9" x2="569.7" y2="455.9" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="542.7" y="409.4" text-anchor="middle">20°</text>
+            <line x1="668.0" y1="474.9" x2="668.0" y2="419.9" stroke="#2569a2" stroke-width="3"/>
+            <rect x="641.0" y="437.9" width="54" height="29.4" fill="#2569a2"/>
+            <line x1="641.0" y1="454.8" x2="695.0" y2="454.8" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="668.0" y="410.9" text-anchor="middle">20°</text>
+            <line x1="793.3" y1="475.5" x2="793.3" y2="426.7" stroke="#17507f" stroke-width="3"/>
+            <rect x="766.3" y="443.9" width="54" height="25.1" fill="#17507f"/>
+            <line x1="766.3" y1="457.3" x2="820.3" y2="457.3" stroke="#fff" stroke-width="2.4"/>
+            <text class="ad-v" x="793.3" y="417.7" text-anchor="middle">19°</text>
+            <line class="ad-g" x1="104" y1="486" x2="856" y2="486"/>
+            <text class="ad-bin" x="166.7" y="507" text-anchor="middle">1–5</text>
+            <text class="ad-n" x="166.7" y="522" text-anchor="middle">n=88k</text>
+            <text class="ad-bin" x="292.0" y="507" text-anchor="middle">5–10</text>
+            <text class="ad-n" x="292.0" y="522" text-anchor="middle">n=37k</text>
+            <text class="ad-bin" x="417.3" y="507" text-anchor="middle">10–25</text>
+            <text class="ad-n" x="417.3" y="522" text-anchor="middle">n=62k</text>
+            <text class="ad-bin" x="542.7" y="507" text-anchor="middle">25–50</text>
+            <text class="ad-n" x="542.7" y="522" text-anchor="middle">n=40k</text>
+            <text class="ad-bin" x="668.0" y="507" text-anchor="middle">50–100</text>
+            <text class="ad-n" x="668.0" y="522" text-anchor="middle">n=12k</text>
+            <text class="ad-bin" x="793.3" y="507" text-anchor="middle">100+</text>
+            <text class="ad-n" x="793.3" y="522" text-anchor="middle">n=3k</text>
+            <text class="ad-ax" x="480.0" y="540" text-anchor="middle">how hard the robot is actually being pushed   [N]</text>
+            </svg>
+          </figure>
+        <p>
+              The guess points the right way, and gets sharper the harder the push &mdash; 33&deg;
+              off at a light touch, 19&deg; under a heavy load. What it gets wrong is the size: it
+              over-estimates light pushes and under-estimates heavy ones. Right direction, wrong
+              distance &mdash; exactly the kind of error a small, bounded residual can absorb.
+        </p>
+        </article>
+
+        <!-- What does the correction fix? -->
+        <article class="results-panel prose-lg">
+          <div class="results-head">
+            <h3>What the Residual Actually Fixes</h3>
+            
+          </div>
+          <p>
+              To demonstrate the contribution of the residual policy, we swapped the policy's estimation for the simulator's true push &mdash;
+              something it can never have on hardware &mdash; and turned the residual policy on and off
+              in each case. If the residual policy is really fixing the estimation, it should only help when
+              the estimation is being used.
+            </p>
+          <div class="table-wrap">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>What the robot is given</th>
+                  <th><span class="sym">&Vert;<i>f</i>&minus;<i>f&#770;</i>&Vert;</span></th>
+                  <th><span class="sym">E<sub>imp</sub> &darr;</span></th>
+                  <th><span class="sym">&rho;<sub>&tau;</sub> &darr;</span></th>
+                  <th><span class="sym">&Vert;&Delta;<i>x</i>&Vert;</span></th>
+                  <th><span class="sym">S &uarr;</span></th>
+                </tr>
+                <tr class="subhead">
+                  <th></th>
+                  <th><span class="desc">how wrong<br>the guess is</span> <span class="unit">N</span></th>
+                  <th><span class="desc">distance from<br>the ideal give</span> <span class="unit">cm</span></th>
+                  <th><span class="desc">joints near their<br>torque limit</span> <span class="unit">%</span></th>
+                  <th><span class="desc">how far the<br>correction moves</span> <span class="unit">cm</span></th>
+                  <th><span class="desc">trials without<br>a fall</span> <span class="unit">%</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>A &mdash; estimated F, no correction</td>
+                  <td>10.1<small>&plusmn;2.1</small></td><td>3.81<small>&plusmn;0.29</small></td>
+                  <td>1.56<small>&plusmn;0.21</small></td><td class="no">&ndash;</td><td>94</td>
+                </tr>
+                <tr>
+                  <td>B &mdash; ground-truth F, no correction</td>
+                  <td>0</td><td>2.44<small>&plusmn;0.22</small></td>
+                  <td>1.02<small>&plusmn;0.17</small></td><td class="no">&ndash;</td><td>97</td>
+                </tr>
+                <tr>
+                  <td>C &mdash; ground-truth F, with correction</td>
+                  <td>0</td><td><b>2.31</b><small>&plusmn;0.21</small></td>
+                  <td><b>0.89</b><small>&plusmn;0.14</small></td><td>0.4</td><td>98</td>
+                </tr>
+                <tr class="ours">
+                  <td>D &mdash; estimated F, with correction <i>(ours)</i></td>
+                  <td>10.1<small>&plusmn;2.1</small></td><td>2.58<small>&plusmn;0.24</small></td>
+                  <td>0.93<small>&plusmn;0.15</small></td><td>2.1</td><td>98</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The residual policy does serve as a compensation for the estimation error. The correction is worth 1.23&nbsp;cm when the robot is working from its own
+            guess (A&nbsp;&rarr;&nbsp;D) but only 0.13&nbsp;cm when it already has the truth
+            (B&nbsp;&rarr;&nbsp;C) &mdash; and with nothing left to fix it shrinks itself five-fold,
+            from 2.1&nbsp;cm of movement down to 0.4. Handing the robot a perfect force reading
+            would have almost no benefit (2.44 vs. our 2.58&nbsp;cm), so a rough guess is good enough
+            as long as something small is there to clean it up.
+          </p>
+        </article>
+
+        <article class="results-panel prose-lg">
+          <div class="results-head">
+            <h3>Force Latent Visualization</h3>
+          </div>
+          <div class="method-split method-split--latent">
+            <div class="method-split-text">
+              <p>
+                Each point is the policy's estimation of a moment of contact, coloured by where
+                the push actually landed. They separate into clean groups &mdash; left limb, right
+                limb, pelvis, several at once, and nothing at all. So during the training, the policy implicitly learned to distinguish the different perturbation classes, even though it was never told what they were.
+              </p>
+            </div>
+            <figure class="latent3d-figure">
+              <div id="latent3d" class="latent3d">
+                <noscript>
+                  <img src="figures/latent.jpeg" alt="t-SNE of the force latent: embeddings cluster by perturbation class (none, left, right, center, mixed)" />
+                </noscript>
+              </div>
+            </figure>
+          </div>
+        </article>
+      </section>
+
+      <!-- ===================== Demos ===================== -->
+      <section id="demos" class="section prose-lg">
+        <header class="section-head">
+          <h2>Demos</h2>
+        </header>
+
+        <article class="results-panel">
+          <div class="results-head">
+            <h3>Whole-body Compliance</h3>
+          </div>
+
+          <div class="qual-block">
+            <h4 class="qual-title">Compliant vs. stiff</h4>
+            <p class="qual-desc">
+              Ours moves its whole body out of the way; the stiff
+              policy resists until it is imbalance.
+            </p>
+            <div class="qual-compare">
+              <figure>
+                <video src="figures/video_sim/compare_sim/output_compliant_arm_up.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Compliant policy yielding to an upward arm force in simulation"></video>
+                <figcaption>Ours (compliant)</figcaption>
+              </figure>
+              <figure>
+                <video src="figures/video_sim/compare_sim/output_stiff_arm_up.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Stiff policy resisting an upward arm force in simulation"></video>
+                <figcaption>Stiff policy</figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <div class="qual-block">
+            <h4 class="qual-title">One policy, many contact points</h4>
+            <p class="qual-desc">
+              The same policy yields to external forces at the shoulder, the wrist, and the pelvis.
+            </p>
+            <div class="qual-multisite">
+              <figure>
+                <video src="figures/video_sim/multi_site/output_pull_shoulder.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Policy yielding to a force at the shoulder"></video>
+                <figcaption>Shoulder</figcaption>
+              </figure>
+              <figure>
+                <video src="figures/video_sim/multi_site/output_pull_wrist.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Policy yielding to a force at the wrist"></video>
+                <figcaption>Wrist</figcaption>
+              </figure>
+              <figure>
+                <video src="figures/video_sim/multi_site/output_squat.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Policy squatting under a downward force at the pelvis"></video>
+                <figcaption>Pelvis</figcaption>
+              </figure>
+            </div>
+          </div>
+        </article>
+
+        <article class="results-panel">
+          <div class="results-head">
+            <h3>Evaluation on a real 70&nbsp;kg Humanoid</h3>
+            <p>
+              We conducted five tasks, run by teleoperation on an in-house humanoid roughly twice the weight of
+              the G1 used in most prior work on compliant humanoids.
+            </p>
+          </div>
+          <div class="hw-gallery" id="hw-gallery" data-current="figures/video_real/static.MP4">
+            <!-- Thumbnail strip: hover or click to load into the stage below -->
+            <div class="hw-thumbs" role="tablist" aria-label="Hardware experiment clips">
+              <button class="hw-thumb is-active" type="button" role="tab" aria-selected="true"
+                data-src="figures/video_real/static.MP4"
+                data-title="Static force reaction"
+                data-desc="Steady pushes while standing.">
+                <video src="figures/video_real/static.MP4#t=0.1" muted loop playsinline preload="metadata" tabindex="-1"></video>
+                <span class="hw-thumb-label">Static force reaction</span>
+              </button>
+              <button class="hw-thumb" type="button" role="tab" aria-selected="false"
+                data-src="figures/video_real/dynamic.MP4"
+                data-title="Dynamic force reaction"
+                data-desc="Steady pushes while moving.">
+                <video src="figures/video_real/dynamic.MP4#t=0.1" muted loop playsinline preload="metadata" tabindex="-1"></video>
+                <span class="hw-thumb-label">Dynamic force reaction</span>
+              </button>
+              <button class="hw-thumb" type="button" role="tab" aria-selected="false"
+                data-src="figures/video_real/wiping.MP4"
+                data-title="Board wiping"
+                data-desc="Robot is teleoperated to clean a board. It leans its trunk back and shifts its weight to keep contact &mdash; something an upper-body-only method cannot do.">
+                <video src="figures/video_real/wiping.MP4#t=0.1" muted loop playsinline preload="metadata" tabindex="-1"></video>
+                <span class="hw-thumb-label">Board wiping</span>
+              </button>
+              <button class="hw-thumb" type="button" role="tab" aria-selected="false"
+                data-src="figures/video_real/squat.MP4"
+                data-title="Squat under payload"
+                data-desc="Gradually sinking under a 100&nbsp;N downward force at the pelvis. The robot gives at the hips and knees, keeping its torso upright and its feet flat.">
+                <video src="figures/video_real/squat.MP4#t=0.1" muted loop playsinline preload="metadata" tabindex="-1"></video>
+                <span class="hw-thumb-label">Squat under payload</span>
+              </button>
+              <button class="hw-thumb" type="button" role="tab" aria-selected="false"
+                data-src="figures/video_real/transport.MP4"
+                data-title="Cooperative payload transport"
+                data-desc="A person hands over a 100&nbsp;N bar. The robot gives at the wrists, passes the load down through torso and hips while moving.">
+                <video src="figures/video_real/transport.MP4#t=0.1" muted loop playsinline preload="metadata" tabindex="-1"></video>
+                <span class="hw-thumb-label">Cooperative payload transport</span>
+              </button>
+            </div>
+
+            <!-- Main stage: full-size clip + task description -->
+            <div class="hw-stage">
+              <div class="hw-stage-video">
+                <video id="hw-main-video" src="figures/video_real/static.MP4#t=0.1" autoplay loop muted playsinline preload="metadata"></video>
+              </div>
+              <div class="hw-stage-info">
+                <h4 id="hw-main-title">Static force reaction</h4>
+                <p id="hw-main-desc">Steady pushes while standing.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ===================== Authors ===================== -->
+      <section id="authors" class="section">
+        <header class="section-head">
+          <h2>Authors</h2>
+        </header>
+        <div class="author-grid">
+          <div class="author-row">
+            <a class="author-card" href="https://dotandung.github.io" target="_blank" rel="noopener">
+              <img src="assets/authors/do.jpg" alt="Tan-Dzung Do" width="256" height="256" loading="lazy">
+              <span class="author-name">Tan-Dzung Do<sup>1*</sup></span>
+            </a>
+            <a class="author-card" href="https://kookie14.github.io/kookie14/" target="_blank" rel="noopener">
+              <img src="assets/authors/trinh.jpg" alt="Cuc T. Trinh" width="256" height="256" loading="lazy">
+              <span class="author-name">Cuc T. Trinh<sup>1*</sup></span>
+            </a>
+            <a class="author-card" href="https://tuandattt.github.io/" target="_blank" rel="noopener">
+              <img src="assets/authors/phuong.jpg" alt="Tuan Dat Phuong" width="256" height="256" loading="lazy">
+              <span class="author-name">Tuan Dat Phuong<sup>2</sup></span>
+            </a>
+          </div>
+          <div class="author-row">
+            <a class="author-card" href="https://github.com/LeAnhChien-1903" target="_blank" rel="noopener">
+              <img src="assets/authors/lechien.jpeg" alt="Chien Le" width="256" height="256" loading="lazy">
+              <span class="author-name">Chien Le<sup>1</sup></span>
+            </a>
+            <a class="author-card" href="https://capfab.github.io/" target="_blank" rel="noopener">
+              <img src="assets/authors/thanhly.jpg" alt="Thanh Ly" width="256" height="256" loading="lazy">
+              <span class="author-name">Thanh Ly<sup>1</sup></span>
+            </a>
+            <a class="author-card" href="https://vienngo.github.io/" target="_blank" rel="noopener">
+              <img src="assets/authors/ngo.jpeg" alt="Vien Anh Ngo" width="256" height="256" loading="lazy">
+              <span class="author-name">Vien Anh Ngo<sup>1,3&dagger;</sup></span>
+            </a>
+            <a class="author-card" href="https://anindex.github.io/" target="_blank" rel="noopener">
+              <img src="assets/authors/le.jpg" alt="An Thai Le" width="256" height="256" loading="lazy">
+              <span class="author-name">An Thai Le<sup>1,3,4&dagger;</sup></span>
+            </a>
+          </div>
+        </div>
+        <div class="author-affiliations">
+          <span><sup>1</sup>VinRobotics</span>
+          <span><sup>2</sup>National University of Singapore</span>
+          <span><sup>3</sup>VinUniversity</span>
+          <span><sup>4</sup>TU Darmstadt</span>
+        </div>
+        <div class="author-affiliations author-notes">
+          <span><sup>*</sup>Equal contribution</span>
+          <span><sup>&dagger;</sup>Equal advising</span>
+        </div>
+      </section>
+
+      <!-- ===================== BibTeX ===================== -->
+      <section id="bibtex" class="section">
+        <header class="section-head">
+          <h2>BibTeX</h2>
+        </header>
+        <div class="bibtex-panel">
+          <div class="bibtex-head">
+            <button class="copy-btn" id="copy-bibtex" type="button">Copy</button>
+          </div>
+          <pre class="bibtex" id="bibtex-text">@inproceedings{compliantwbc2026,
+  title     = {Whole-Body Compliance for Heavy Humanoids via Force Latent
+               Estimation and Residual Impedance Targets},
+  author    = {Do, Tan-Dzung and Trinh, Cuc T. and Phuong, Tuan Dat and
+               Le, Chien and Ly, Thanh and Ngo, Vien Anh and Le, An Thai},
+  booktitle = {Under Review},
+  year      = {2026}
+}</pre>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ===================== Footer ===================== -->
+  <footer class="site-footer">
+    <p>&copy; 2026. CompliantWBC project page.</p>
+    <p>Design adapted from the <a href="https://psi-lab.ai/Psi0/" target="_blank" rel="noreferrer">Psi-Zero project page template</a>.</p>
+  </footer>
+
+</main>
+
+<script src="figures/force_latent_tsne_3d.js"></script>
+<script src="latent3d.js" defer></script>
+<script src="figures/joint_torque_force.js"></script>
+<script src="torqueplot.js" defer></script>
+<script src="figures/torque_heatmap.js"></script>
+<script src="torqueheatmap.js" defer></script>
+
+<script>
+  /* ---- Sticky TOC: highlight the section nearest the viewport anchor ---- */
+  (function () {
+    const tocIds = ["hero", "abstract", "video", "method", "results", "demos", "authors", "bibtex"];
+
+    const syncActive = (activeId) => {
+      document.querySelectorAll("[data-toc-link]").forEach((link) => {
+        link.setAttribute("aria-current", link.dataset.tocLink === activeId ? "true" : "false");
+      });
+    };
+
+    const sections = tocIds.map((id) => document.getElementById(id)).filter(Boolean);
+    if (!sections.length) return;
+
+    let raf = null;
+    const update = () => {
+      raf = null;
+      const anchor = window.innerHeight * 0.33;
+      let active = sections[0];
+      let best = Number.POSITIVE_INFINITY;
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const distance = Math.abs(rect.top - anchor);
+        if (rect.top <= anchor && distance < best) {
+          best = distance;
+          active = section;
+        }
+      });
+      if (window.scrollY < 40) active = sections[0];
+      syncActive(active.id);
+    };
+
+    const schedule = () => {
+      if (raf !== null) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    schedule();
+  })();
+
+  /* ---- Hardware gallery: hover/click a thumbnail to load the stage ---- */
+  (function () {
+    const gallery = document.getElementById("hw-gallery");
+    if (!gallery) return;
+    const main = document.getElementById("hw-main-video");
+    const title = document.getElementById("hw-main-title");
+    const desc = document.getElementById("hw-main-desc");
+    const thumbs = Array.from(gallery.querySelectorAll(".hw-thumb"));
+
+    const select = (btn) => {
+      thumbs.forEach((t) => {
+        const on = t === btn;
+        t.classList.toggle("is-active", on);
+        t.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      title.innerHTML = btn.dataset.title;
+      desc.innerHTML = btn.dataset.desc;
+      if (gallery.dataset.current === btn.dataset.src) return;
+      gallery.dataset.current = btn.dataset.src;
+      main.src = btn.dataset.src + "#t=0.1";
+      main.load();
+      main.play().catch(() => {});
+    };
+
+    thumbs.forEach((btn) => {
+      btn.addEventListener("mouseenter", () => select(btn));
+      btn.addEventListener("focus", () => select(btn));
+      btn.addEventListener("click", () => select(btn));
+    });
+  })();
+
+  /* ---- Copy BibTeX to clipboard ---- */
+  (function () {
+    const btn = document.getElementById("copy-bibtex");
+    const text = document.getElementById("bibtex-text");
+    if (!btn || !text) return;
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(text.textContent.trim());
+        btn.textContent = "Copied";
+        setTimeout(() => (btn.textContent = "Copy"), 1600);
+      } catch {
+        btn.textContent = "Copy failed";
+        setTimeout(() => (btn.textContent = "Copy"), 1600);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
